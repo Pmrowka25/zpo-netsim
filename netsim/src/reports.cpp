@@ -5,6 +5,7 @@
 namespace NetSim {
 
 void generate_structure_report(const Factory& factory, std::ostream& os) {
+    os << "\n";
     os << "== LOADING RAMPS ==\n";
     std::vector<ElementID> ramp_ids;
     for (auto it = factory.ramp_cbegin(); it != factory.ramp_cend(); ++it) {

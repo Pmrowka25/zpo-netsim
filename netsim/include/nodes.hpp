@@ -113,6 +113,10 @@ class PackageSender {
     // No destructor since both 'std::optional<Package>' and
     // 'ReceiverPreferences' are intelligent and clean up after themselves
 
+    ReceiverPreferences
+            receiver_preferences_; // ReceriverPreferences instance, containing
+    // preferences map for every object that derives
+    // from PackageSender base class
   protected:
     /**
      * @brief Inserts package (all of its content due to r-reference &&) to the
@@ -121,10 +125,7 @@ class PackageSender {
     void push_package(Package &&package);
 
     std::optional<Package> buffer_; // Output buffer
-    ReceiverPreferences
-        receiver_preferences_; // ReceriverPreferences instance, containing
-                               // preferences map for every object that derives
-                               // from PackageSender base class
+
 };
 
 /**
