@@ -1,0 +1,149 @@
+@startuml NetSim Class Diagram
+
+' Press Alt+D for preview 
+
+' Appearance seetings
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+
+namespace NetSim {
+
+    ' --- TYPES & HELPERS ---
+    class "types.hpp" as Types << (H,orchid) >> {
+        ElementID
+        Time
+        ProbabilityGenerator
+    }
+
+    class "helpers.hpp" as Helpers << (H,orchid) >> {
+        + generate_random_id()
+    }
+
+    ' --- PACKAGES ---
+    class Package {
+        - id_ : ElementID
+        + get_id() : ElementID
+    }
+
+    ' --- STORAGE TYPES (Abstraction) ---
+    enum PackageQueueType {
+        FIFO
+        LIFO
+    }
+
+    interface IPackageStockpile {
+        + push(Package&&)
+        + empty() : bool
+        + size() : size_t
+        + ~IPackageStockpile()
+    }
+
+    interface IPackageQueue {
+        + pop() : Package
+        + get_queue_type() : PackageQueueType
+        + ~IPackageQueue()
+    }
+
+    class PackageQueue {
+        - queue_type_ : PackageQueueType
+        - deque_ : std::deque<Package>
+        + PackageQueue(PackageQueueType)
+        + push(Package&&)
+        + pop() : Package
+        + get_queue_type() : PackageQueueType
+        + empty() : bool
+        + size() : size_t
+    }
+
+    ' StorageTypes dependencies
+    ' IPackageQueue inherits from IPackageStockpile (is-a)
+    IPackageQueue --|> IPackageStockpile : extends
+    
+    ' PackageQueue implements IPackageQueue interface
+    PackageQueue ..|> IPackageQueue : implements
+    
+    ' PackageQueue uses PackageQueueType (association)
+    PackageQueue --> PackageQueueType
+
+    ' --- NODES ---
+    enum ReceiverType {
+        WORKER
+        STOREHOUSE
+    }
+
+    interface IPackageReceiver {
+        + receive_package(Package)
+        + get_id() : ElementID
+        + get_receiver_type() : ReceiverType
+    }
+
+    class ReceiverPreferences {
+        - preferences : map<IPackageReceiver*, double>
+        + add_receiver(IPackageReceiver*)
+        + remove_receiver(IPackageReceiver*)
+        + choose_receiver() : IPackageReceiver*
+    }
+
+    class PackageSender {
+        - receiver_preferences_ : ReceiverPreferences
+        - push_package(Package)
+        + send_package()
+    }
+
+    class Ramp {
+        - id_ : ElementID
+        - delivery_interval_ : Time
+        + deliver_goods(Time)
+    }
+
+    class Worker {
+        - id_ : ElementID
+        - processing_time_ : Time
+        - queue_ : unique_ptr<IPackageQueue>
+        - processed_buffer_ : optional<Package>
+        + do_work(Time)
+    }
+
+    class Storehouse {
+        - id_ : ElementID
+        - d_ : unique_ptr<IPackageStockpile>
+    }
+
+    ' Nodes Dependencies
+    Ramp --|> PackageSender
+    Worker --|> PackageSender
+    Worker ..|> IPackageReceiver
+    Storehouse ..|> IPackageReceiver
+
+    PackageSender *-- ReceiverPreferences : has
+    Worker *-- IPackageQueue : owns strategy
+    Storehouse *-- IPackageStockpile : owns
+
+    ' --- FACTORY ---
+    class "Factory" as FactoryClass {
+        + load_factory_structure(string path)
+        + save_factory_structure(string path)
+    }
+    
+    class "NodeCollection<T>" as NodeCollection {
+        - container : vector<T>
+        + find_by_id(ElementID)
+        + add(T)
+        + remove(ElementID)
+    }
+
+    FactoryClass *-- NodeCollection : manages
+
+    ' --- REPORTS ---
+    class IntervalReportNotifier {
+        - interval_ : Time
+        + should_generate_report(Time) : bool
+    }
+
+    class SpecificTurnsReportNotifier {
+        - turns_ : set<Time>
+        + should_generate_report(Time) : bool
+    }
+}
+
+@enduml

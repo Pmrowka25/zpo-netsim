@@ -1,0 +1,6 @@
+C:/Users/P/Desktop/studia/sem3/zpo/zpo-serwer/build/CMakeFiles/netsim_lib.dir
+C:/Users/P/Desktop/studia/sem3/zpo/zpo-serwer/build/CMakeFiles/NetSimApp.dir
+C:/Users/P/Desktop/studia/sem3/zpo/zpo-serwer/build/CMakeFiles/NetSimGTest.dir
+C:/Users/P/Desktop/studia/sem3/zpo/zpo-serwer/build/CMakeFiles/NetSimTest.dir
+C:/Users/P/Desktop/studia/sem3/zpo/zpo-serwer/build/CMakeFiles/edit_cache.dir
+C:/Users/P/Desktop/studia/sem3/zpo/zpo-serwer/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,14 @@
+# .clang-format
+---
+Language: Cpp
+
+BasedOnStyle: LLVM 
+
+SortIncludes: true 
+
+IndentWidth: 4 
+TabWidth: 4
+UseTab: Never 
+
+AccessModifierOffset: -2
+
